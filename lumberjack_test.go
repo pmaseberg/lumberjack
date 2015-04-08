@@ -114,11 +114,11 @@ func TestDefaultFilename(t *testing.T) {
 	currentTime = fakeTime
 	dir := os.TempDir()
 	filename := filepath.Join(dir, filepath.Base(os.Args[0])+"-lumberjack.log")
+	defer os.Remove(filename)
 	l := &Logger{}
 	defer l.Close()
 	b := []byte("boo!")
 	n, err := l.Write(b)
-	defer os.Remove(filename)
 
 	isNil(err, t)
 	equals(len(b), n, t)
@@ -493,7 +493,6 @@ func TestRotate(t *testing.T) {
 	existsWithLen(filename2, n, t)
 	existsWithLen(filename, 0, t)
 	fileCount(dir, 2, t)
-
 	newFakeTime()
 
 	err = l.Rotate()
